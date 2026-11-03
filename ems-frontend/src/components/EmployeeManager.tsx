@@ -17,6 +17,7 @@ function EmployeeManager() {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
+    // Form States
     const [showForm, setShowForm] = useState<boolean>(false);
     const [editingId, setEditingId] = useState<number | null>(null);
 
@@ -30,6 +31,12 @@ function EmployeeManager() {
 
     const [formError, setFormError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState<boolean>(false);
+
+    // Search, Filter & Pagination States
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [selectedFilterDeptId, setSelectedFilterDeptId] = useState<string>('all');
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const itemsPerPage = 5; // প্রতি পেজে কয়জন Employee দেখাবে
 
     const fetchData = async (): Promise<void> => {
         setLoading(true);
@@ -60,6 +67,32 @@ function EmployeeManager() {
     useEffect(() => {
         fetchData();
     }, []);
+
+    // Search বা Filter পাল্টালে পেজ নম্বর ১ এ ফেরত যাবে
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, selectedFilterDeptId]);
+
+    // Filtering Logic (Search Term & Department Filter)
+    const filteredEmployees = employees.filter((emp) => {
+        const matchesSearch =
+            emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            emp.designation.toLowerCase().includes(searchTerm.toLowerCase());
+
+        const matchesDept =
+            selectedFilterDeptId === 'all' ||
+            emp.departmentId === Number(selectedFilterDeptId);
+
+        return matchesSearch && matchesDept;
+    });
+
+    // Pagination Logic
+    const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedEmployees = filteredEmployees.slice(
+        startIndex,
+        startIndex + itemsPerPage
+    );
 
     const openCreateForm = async (): Promise<void> => {
         setEditingId(null);
@@ -162,7 +195,8 @@ function EmployeeManager() {
 
     return (
         <div className="bg-cornsilk-900 rounded-xl p-6 border border-sunlit-clay-800">
-            <div className="flex items-center justify-between mb-4">
+            {/* Header Area */}
+            <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-black-forest-500">Employees</h2>
                 <button
                     onClick={openCreateForm}
@@ -172,8 +206,9 @@ function EmployeeManager() {
                 </button>
             </div>
 
+            {/* Create/Edit Form */}
             {showForm && (
-                <form onSubmit={handleSubmit} className="bg-cornsilk-800 border border-sunlit-clay-700 rounded-lg p-5 mb-5 space-y-4">
+                <form onSubmit={handleSubmit} className="bg-cornsilk-800 border border-sunlit-clay-700 rounded-lg p-5 mb-6 space-y-4">
                     <h3 className="font-semibold text-black-forest-500 text-lg">
                         {editingId === null ? 'New Employee' : 'Edit Employee'}
                     </h3>
@@ -323,52 +358,112 @@ function EmployeeManager() {
                 </form>
             )}
 
+            {/* Search and Filter Controls Bar */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="md:col-span-2">
+                    <input
+                        type="text"
+                        placeholder="Search by name or designation..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full px-4 py-2 rounded-lg border border-sunlit-clay-700 bg-cornsilk-800 text-black-forest-500 focus:outline-none focus:ring-2 focus:ring-olive-leaf-500 placeholder-olive-leaf-500"
+                    />
+                </div>
+                <div>
+                    <select
+                        value={selectedFilterDeptId}
+                        onChange={(e) => setSelectedFilterDeptId(e.target.value)}
+                        className="w-full px-4 py-2 rounded-lg border border-sunlit-clay-700 bg-cornsilk-800 text-black-forest-500 focus:outline-none focus:ring-2 focus:ring-olive-leaf-500"
+                    >
+                        <option value="all">All Departments</option>
+                        {departments.map((dept) => (
+                            <option key={dept.id} value={dept.id}>
+                                {dept.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
+            {/* Table Area */}
             {loading ? (
                 <p className="text-olive-leaf-500">Loading employees...</p>
             ) : error ? (
                 <p className="text-copperwood-500">{error}</p>
-            ) : employees.length === 0 ? (
-                <p className="text-olive-leaf-500">No employees found.</p>
+            ) : filteredEmployees.length === 0 ? (
+                <p className="text-olive-leaf-500 text-center py-4">No employees match your criteria.</p>
             ) : (
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                        <thead>
-                            <tr className="border-b border-sunlit-clay-700">
-                                <th className="py-2 text-sm font-semibold text-olive-leaf-500">Name</th>
-                                <th className="py-2 text-sm font-semibold text-olive-leaf-500">Username</th>
-                                <th className="py-2 text-sm font-semibold text-olive-leaf-500">Department</th>
-                                <th className="py-2 text-sm font-semibold text-olive-leaf-500">Designation</th>
-                                <th className="py-2 text-sm font-semibold text-olive-leaf-500">Salary</th>
-                                <th className="py-2 text-sm font-semibold text-olive-leaf-500 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {employees.map((emp) => (
-                                <tr key={emp.id} className="border-b border-sunlit-clay-800">
-                                    <td className="py-2 text-black-forest-500">{emp.name}</td>
-                                    <td className="py-2 text-olive-leaf-500">{emp.username}</td>
-                                    <td className="py-2 text-black-forest-500">{emp.departmentName}</td>
-                                    <td className="py-2 text-black-forest-500">{emp.designation}</td>
-                                    <td className="py-2 text-black-forest-500">৳{emp.salary.toLocaleString()}</td>
-                                    <td className="py-2 text-right space-x-3">
-                                        <button
-                                            onClick={() => openEditForm(emp)}
-                                            className="text-sunlit-clay-300 hover:underline text-sm font-medium"
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(emp.id)}
-                                            className="text-copperwood-500 hover:underline text-sm font-medium"
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
+                <>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                            <thead>
+                                <tr className="border-b border-sunlit-clay-700">
+                                    <th className="py-2 text-sm font-semibold text-olive-leaf-500">Name</th>
+                                    <th className="py-2 text-sm font-semibold text-olive-leaf-500">Username</th>
+                                    <th className="py-2 text-sm font-semibold text-olive-leaf-500">Department</th>
+                                    <th className="py-2 text-sm font-semibold text-olive-leaf-500">Designation</th>
+                                    <th className="py-2 text-sm font-semibold text-olive-leaf-500">Salary</th>
+                                    <th className="py-2 text-sm font-semibold text-olive-leaf-500 text-right">Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                {paginatedEmployees.map((emp) => (
+                                    <tr key={emp.id} className="border-b border-sunlit-clay-800 hover:bg-cornsilk-800 transition-colors">
+                                        <td className="py-3 text-black-forest-500 font-medium">{emp.name}</td>
+                                        <td className="py-3 text-olive-leaf-500">{emp.username}</td>
+                                        <td className="py-3 text-black-forest-500">{emp.departmentName}</td>
+                                        <td className="py-3 text-black-forest-500">{emp.designation}</td>
+                                        <td className="py-3 text-black-forest-500">৳{emp.salary.toLocaleString()}</td>
+                                        <td className="py-3 text-right space-x-3">
+                                            <button
+                                                onClick={() => openEditForm(emp)}
+                                                className="text-sunlit-clay-300 hover:underline text-sm font-medium"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(emp.id)}
+                                                className="text-copperwood-500 hover:underline text-sm font-medium"
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-between mt-6 pt-4 border-t border-sunlit-clay-800">
+                            <span className="text-sm text-olive-leaf-500">
+                                Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredEmployees.length)} of {filteredEmployees.length} entries
+                            </span>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                    className="px-3 py-1.5 rounded-lg border border-sunlit-clay-700 bg-cornsilk-800 text-black-forest-500 text-sm font-medium hover:bg-cornsilk-700 disabled:opacity-40 transition-colors"
+                                >
+                                    Previous
+                                </button>
+
+                                <span className="px-3 py-1.5 text-sm text-black-forest-500 font-semibold">
+                                    Page {currentPage} of {totalPages}
+                                </span>
+
+                                <button
+                                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                    className="px-3 py-1.5 rounded-lg border border-sunlit-clay-700 bg-cornsilk-800 text-black-forest-500 text-sm font-medium hover:bg-cornsilk-700 disabled:opacity-40 transition-colors"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );
