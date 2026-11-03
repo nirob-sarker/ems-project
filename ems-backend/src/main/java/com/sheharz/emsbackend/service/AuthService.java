@@ -6,6 +6,7 @@ import com.sheharz.emsbackend.dto.LoginRequest;
 import com.sheharz.emsbackend.dto.RegisterRequest;
 import com.sheharz.emsbackend.entity.Role;
 import com.sheharz.emsbackend.entity.User;
+import com.sheharz.emsbackend.exception.ResourceNotFoundException;
 import com.sheharz.emsbackend.repository.UserRepository;
 import com.sheharz.emsbackend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.sheharz.emsbackend.exception.DuplicateResourceException;
-
+import com.sheharz.emsbackend.dto.PasswordChangeRequest;
+import com.sheharz.emsbackend.dto.MessageResponse;
+import org.springframework.security.authentication.BadCredentialsException;
 
 @Service
 @RequiredArgsConstructor
@@ -66,5 +69,19 @@ public class AuthService {
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
 
         return new AuthResponse(token, user.getUsername(), user.getRole().name());
+    }
+
+    public MessageResponse changePassword(String username, PasswordChangeRequest request) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new BadCredentialsException("Current password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        return new MessageResponse("Password changed successfully");
     }
 }

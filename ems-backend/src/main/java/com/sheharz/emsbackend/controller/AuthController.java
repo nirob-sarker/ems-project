@@ -9,6 +9,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.sheharz.emsbackend.dto.PasswordChangeRequest;
+import com.sheharz.emsbackend.dto.MessageResponse;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,5 +28,14 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<MessageResponse> changePassword(
+            Authentication authentication,
+            @Valid @RequestBody PasswordChangeRequest request
+    ) {
+        String username = authentication.getName();
+        return ResponseEntity.ok(authService.changePassword(username, request));
     }
 }
