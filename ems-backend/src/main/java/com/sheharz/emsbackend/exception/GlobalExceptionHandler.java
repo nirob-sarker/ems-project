@@ -1,7 +1,7 @@
 package com.sheharz.emsbackend.exception;
 
-
 import com.sheharz.emsbackend.dto.ErrorResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -39,6 +39,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
+    // যখন Database Foreign Key Constraint Fail হয় (যেমন Employee থাকা অবস্থায় Department Delete করা) (409 Conflict)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "Cannot delete this department because it has assigned employees. Please remove or reassign those employees first."
+        );
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
     // যখন Login এর সময় ভুল Username/Password দেয় (401)
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex) {
@@ -50,7 +61,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
-    // যখন @Valid Validation Fail হয় (জেমন Email format ভুল, Password ছোট)
+    // যখন @Valid Validation Fail হয় (যেমন Email format ভুল, Password ছোট)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
