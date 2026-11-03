@@ -1,0 +1,46 @@
+# ============================================
+# BACKEND (Spring Boot / IntelliJ)
+# ============================================
+
+# IntelliJ IDEA project files (IDE এর personal settings, কারো কাজে আসবে না)
+ems-backend/.idea/
+ems-backend/*.iml
+ems-backend/out/
+
+# Maven build output (Compiled code, JAR files — এগুলো আবার build করা যায়)
+ems-backend/target/
+
+# Gradle build output (যদি Gradle ব্যবহার করেন)
+ems-backend/build/
+ems-backend/.gradle/
+
+# Java compiled files
+*.class
+
+# Log files
+*.log
+
+# ============================================
+# FRONTEND (React / Vite / VS Code)
+# ============================================
+
+# node_modules (সবচেয়ে গুরুত্বপূর্ণ! কয়েকশ MB, কখনো push করবেন না)
+# কেউ clone করলে "npm install" দিলেই আবার তৈরি হবে
+ems-frontend/node_modules/
+
+# Vite build output (Production build, আবার build করা যায়)
+ems-frontend/dist/
+
+# ============================================
+# GENERAL (OS-specific junk files)
+# ============================================
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Mac
+.DS_Store
+
+# Linux
+*~

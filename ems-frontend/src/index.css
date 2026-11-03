@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@theme {
+  /* Olive Leaf */
+  --color-olive-leaf-100: #13160b;
+  --color-olive-leaf-200: #262b16;
+  --color-olive-leaf-300: #394121;
+  --color-olive-leaf-400: #4c562c;
+  --color-olive-leaf-500: #606c38;
+  --color-olive-leaf-600: #88994f;
+  --color-olive-leaf-700: #a9b876;
+  --color-olive-leaf-800: #c5d0a3;
+  --color-olive-leaf-900: #e2e7d1;
+
+  /* Black Forest */
+  --color-black-forest-100: #080b05;
+  --color-black-forest-200: #101509;
+  --color-black-forest-300: #18200e;
+  --color-black-forest-400: #1f2a13;
+  --color-black-forest-500: #283618;
+  --color-black-forest-600: #547133;
+  --color-black-forest-700: #80ac4d;
+  --color-black-forest-800: #aac987;
+  --color-black-forest-900: #d5e4c3;
+
+  /* Cornsilk */
+  --color-cornsilk-100: #5d5103;
+  --color-cornsilk-200: #baa206;
+  --color-cornsilk-300: #f8dc27;
+  --color-cornsilk-400: #fbeb84;
+  --color-cornsilk-500: #fefae0;
+  --color-cornsilk-600: #fefbe7;
+  --color-cornsilk-700: #fefced;
+  --color-cornsilk-800: #fffdf3;
+  --color-cornsilk-900: #fffef9;
+
+  /* Sunlit Clay */
+  --color-sunlit-clay-100: #34210b;
+  --color-sunlit-clay-200: #684216;
+  --color-sunlit-clay-300: #9d6321;
+  --color-sunlit-clay-400: #d1842c;
+  --color-sunlit-clay-500: #dda15e;
+  --color-sunlit-clay-600: #e4b57f;
+  --color-sunlit-clay-700: #ebc79f;
+  --color-sunlit-clay-800: #f1dabf;
+  --color-sunlit-clay-900: #f8ecdf;
+
+  /* Copperwood */
+  --color-copperwood-100: #251507;
+  --color-copperwood-200: #4b2b0f;
+  --color-copperwood-300: #704016;
+  --color-copperwood-400: #96561e;
+  --color-copperwood-500: #bc6c25;
+  --color-copperwood-600: #d98840;
+  --color-copperwood-700: #e3a570;
+  --color-copperwood-800: #ecc3a0;
+  --color-copperwood-900: #f6e1cf;
+}
