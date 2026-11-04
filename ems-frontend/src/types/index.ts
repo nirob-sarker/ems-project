@@ -110,3 +110,13 @@ export interface CreateLeaveRequestInput {
     leaveType: LeaveType;
     reason: string;
 }
+
+export interface Attendance {
+    id: number;
+    employeeId: number;
+    employeeName: string;
+    departmentName: string;
+    date: string;
+    checkInTime: string;
+    checkOutTime: string | null;
+}
