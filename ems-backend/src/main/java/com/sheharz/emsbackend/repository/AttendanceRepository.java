@@ -17,4 +17,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     // Admin এর জন্য সবার হাজিরা দেখা
     List<Attendance> findAllByOrderByDateDesc();
+
+    long countByDate(java.time.LocalDate date);
 }

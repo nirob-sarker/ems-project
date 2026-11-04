@@ -12,4 +12,6 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
 
     // সকল ছুটির আবেদন পাওয়ার জন্য (সবচেয়ে নতুন আবেদনগুলো উপরে থাকবে)
     List<LeaveRequest> findAllByOrderByAppliedOnDesc();
+
+    long countByStatus(com.sheharz.emsbackend.entity.LeaveStatus status);
 }

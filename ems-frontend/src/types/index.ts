@@ -120,3 +120,10 @@ export interface Attendance {
     checkInTime: string;
     checkOutTime: string | null;
 }
+
+export interface DashboardStats {
+    totalEmployees: number;
+    totalDepartments: number;
+    pendingLeaves: number;
+    presentToday: number;
+}
