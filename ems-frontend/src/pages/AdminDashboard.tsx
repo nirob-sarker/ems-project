@@ -2,8 +2,9 @@ import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import DepartmentManager from '../components/DepartmentManager';
 import EmployeeManager from '../components/EmployeeManager';
+import LeaveManager from '../components/LeaveManager';
 
-type Tab = 'departments' | 'employees';
+type Tab = 'departments' | 'employees' | 'leaves';
 
 function AdminDashboard() {
     const [activeTab, setActiveTab] = useState<Tab>('departments');
@@ -34,9 +35,25 @@ function AdminDashboard() {
                     >
                         Employees
                     </button>
+                    <button
+                        onClick={() => setActiveTab('leaves')}
+                        className={`px-5 py-2 rounded-lg font-medium transition-colors ${
+                            activeTab === 'leaves'
+                                ? 'bg-black-forest-500 text-cornsilk-500'
+                                : 'bg-cornsilk-900 text-black-forest-500 border border-sunlit-clay-700'
+                        }`}
+                    >
+                        Leave Requests
+                    </button>
                 </div>
 
-                {activeTab === 'departments' ? <DepartmentManager /> : <EmployeeManager />}
+                {activeTab === 'departments' ? (
+                    <DepartmentManager />
+                ) : activeTab === 'employees' ? (
+                    <EmployeeManager />
+                ) : (
+                    <LeaveManager />
+                )}
             </div>
         </div>
     );

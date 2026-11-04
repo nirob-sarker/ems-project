@@ -87,3 +87,26 @@ export interface UserSummary {
     username: string;
     email: string;
 }
+
+export type LeaveType = 'CASUAL' | 'SICK' | 'ANNUAL' | 'UNPAID';
+export type LeaveStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export interface LeaveRequest {
+    id: number;
+    employeeId: number;
+    employeeName: string;
+    departmentName: string;
+    startDate: string;
+    endDate: string;
+    leaveType: LeaveType;
+    reason: string;
+    status: LeaveStatus;
+    appliedOn: string;
+}
+
+export interface CreateLeaveRequestInput {
+    startDate: string;
+    endDate: string;
+    leaveType: LeaveType;
+    reason: string;
+}
